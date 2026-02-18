@@ -15,7 +15,7 @@ Webapp pour une agence de voyage temporel fictive, développée dans le cadre du
 
 ## 🌐 Liens
 
-- **Webapp déployée** : [https://votre-url.netlify.app](https://votre-url.netlify.app)
+- **Webapp déployée** : [https://yohanhebrard.github.io/iachatbot/](https://votre-url.netlify.app)
 - **Repository GitHub** : [https://github.com/yohanhebrard/iachatbot.git](https://github.com/votre-repo)
 
 ---
