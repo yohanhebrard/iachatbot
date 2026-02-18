@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TimeTravel Agency — Voyages Temporels de Luxe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C97A;
+      --gold-dim: rgba(201, 168, 76, 0.15);
+      --dark: #080808;
+      --dark-2: #0f0f0f;
+      --dark-3: #161616;
+      --dark-4: #1e1e1e;
+      --text: #e8e0d0;
+      --text-dim: rgba(232, 224, 208, 0.5);
+      --transition: 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(8, 8, 8, 0.95), transparent);
+      transition: background 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(8, 8, 8, 0.97);
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--text);
+    }
+
+    nav ul {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--gold);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201, 168, 76, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(120, 60, 180, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #080808 0%, #0a0a0a 100%);
+    }
+
+    /* Animated stars */
+    .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: 0.1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.8;
+        transform: scale(1.5);
+      }
+    }
+
+    /* Clock mechanism decoration */
+    .clock-deco {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border: 1px solid rgba(201, 168, 76, 0.08);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: rotateSlow 40s linear infinite;
+    }
+
+    .clock-deco::before {
+      content: '';
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(201, 168, 76, 0.05);
+      border-radius: 50%;
+    }
+
+    .clock-deco::after {
+      content: '';
+      position: absolute;
+      inset: 60px;
+      border: 1px dashed rgba(201, 168, 76, 0.04);
+      border-radius: 50%;
+    }
+
+    @keyframes rotateSlow {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.3s;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.6s;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    .hero-sub {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      max-width: 500px;
+      margin: 0 auto 3rem;
+      line-height: 2;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.9s;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1.2s;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--dark);
+      border: none;
+      padding: 1rem 2.5rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(201, 168, 76, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(232, 224, 208, 0.2);
+      padding: 1rem 2.5rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 2s;
+    }
+
+    .scroll-hint span {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollLine {
+      0% {
+        transform: scaleY(0);
+        transform-origin: top;
+        opacity: 1;
+      }
+
+      50% {
+        transform: scaleY(1);
+        transform-origin: top;
+        opacity: 1;
+      }
+
+      100% {
+        transform: scaleY(1);
+        transform-origin: bottom;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 8rem 3rem;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--dark-2);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      border-radius: 0;
+    }
+
+    #about .about-text p {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      line-height: 2;
+      margin-bottom: 1.5rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .stat {
+      border-left: 1px solid var(--gold);
+      padding-left: 1.5rem;
+    }
+
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--gold);
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    .about-visual {
+      position: relative;
+      height: 500px;
+    }
+
+    .about-visual-inner {
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-visual-inner::before {
+      content: '⏱';
+      font-size: 8rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.15;
+      animation: rotateSlow 20s linear infinite;
+    }
+
+    .about-visual-inner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.05), transparent, rgba(120, 60, 180, 0.05));
+    }
+
+    /* ── DESTINATIONS ── */
+    #destinations {
+      max-width: 1400px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    #destinations .section-title {
+      margin-bottom: 1rem;
+    }
+
+    .destinations-sub {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-bottom: 5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .destinations-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .dest-card {
+      position: relative;
+      height: 600px;
+      overflow: hidden;
+      cursor: pointer;
+      group: true;
+    }
+
+    .dest-card:hover .dest-overlay {
+      opacity: 1;
+    }
+
+    .dest-card:hover .dest-img-bg {
+      transform: scale(1.08);
+    }
+
+    .dest-card:hover .dest-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .dest-img-bg {
+      position: absolute;
+      inset: 0;
+      transition: transform 0.8s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+    }
+
+    .dest-card:nth-child(1) .dest-img-bg {
+      background: linear-gradient(135deg, #1a1008 0%, #2a1a05 40%, #1a0e02 100%);
+    }
+
+    .dest-card:nth-child(2) .dest-img-bg {
+      background: linear-gradient(135deg, #050e1a 0%, #082008 40%, #021508 100%);
+    }
+
+    .dest-card:nth-child(3) .dest-img-bg {
+      background: linear-gradient(135deg, #1a0a08 0%, #250d05 40%, #180805 100%);
+    }
+
+    .dest-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 8, 8, 0.7);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .dest-badge {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      background: var(--gold);
+      color: var(--dark);
+      padding: 0.3rem 0.8rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .dest-static-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2.5rem;
+      background: linear-gradient(to top, rgba(8, 8, 8, 0.95), transparent);
+    }
+
+    .dest-era {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .dest-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      line-height: 1.1;
+    }
+
+    .dest-content {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(10px);
+      opacity: 0;
+      padding: 2rem;
+      transition: all 0.5s ease;
+      text-align: left;
+    }
+
+    .dest-desc {
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: var(--text-dim);
+      margin-bottom: 1.5rem;
+    }
+
+    .dest-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+
+    .dest-price-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── QUIZ ── */
+    #quiz {
+      background: var(--dark-2);
+      text-align: center;
+    }
+
+    #quiz .section-title {
+      max-width: 700px;
+      margin: 0 auto 1rem;
+    }
+
+    .quiz-sub {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-bottom: 4rem;
+      letter-spacing: 0.05em;
+    }
+
+    .quiz-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--dark-3);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      padding: 3rem;
+    }
+
+    .quiz-progress {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      justify-content: center;
+    }
+
+    .progress-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(201, 168, 76, 0.2);
+      transition: background 0.3s;
+    }
+
+    .progress-dot.active {
+      background: var(--gold);
+    }
+
+    .quiz-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      margin-bottom: 2rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .quiz-option {
+      background: transparent;
+      border: 1px solid rgba(232, 224, 208, 0.1);
+      color: var(--text);
+      padding: 1rem 1.5rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    .option-letter {
+      width: 24px;
+      height: 24px;
+      border: 1px solid currentColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .quiz-result {
+      display: none;
+      text-align: center;
+    }
+
+    .quiz-result.show {
+      display: block;
+    }
+
+    .result-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-era {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+    }
+
+    .result-desc {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+    }
+
+    /* ── CHATBOT ── */
+    .chatbot-fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 200;
+      width: 60px;
+      height: 60px;
+      background: var(--gold);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 8px 30px rgba(201, 168, 76, 0.4);
+      transition: all 0.3s;
+    }
+
+    .chatbot-fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 40px rgba(201, 168, 76, 0.5);
+    }
+
+    .chatbot-window {
+      position: fixed;
+      bottom: 6rem;
+      right: 2rem;
+      z-index: 199;
+      width: 380px;
+      height: 520px;
+      background: var(--dark-3);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.9) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    }
+
+    .chatbot-window.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .chat-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--dark-4);
+    }
+
+    .chat-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .chat-header-info h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .chat-header-info p {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(201, 168, 76, 0.2) transparent;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .message.user {
+      align-items: flex-end;
+    }
+
+    .message.bot {
+      align-items: flex-start;
+    }
+
+    .message-bubble {
+      max-width: 80%;
+      padding: 0.8rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.7;
+    }
+
+    .message.bot .message-bubble {
+      background: var(--dark-4);
+      border: 1px solid rgba(201, 168, 76, 0.1);
+      color: var(--text);
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .message.user .message-bubble {
+      background: var(--gold);
+      color: var(--dark);
+      border-radius: 8px 8px 0 8px;
+      font-weight: 400;
+    }
+
+    .chat-input-area {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(201, 168, 76, 0.15);
+      display: flex;
+      gap: 0.75rem;
+      background: var(--dark-4);
+    }
+
+    .chat-input {
+      flex: 1;
+      background: var(--dark-3);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      color: var(--text);
+      padding: 0.7rem 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .chat-input:focus {
+      border-color: var(--gold);
+    }
+
+    .chat-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .chat-send {
+      background: var(--gold);
+      border: none;
+      color: var(--dark);
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+
+    .chat-send:hover {
+      background: var(--gold-light);
+    }
+
+    .chat-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 0.8rem 1rem;
+      background: var(--dark-4);
+      border: 1px solid rgba(201, 168, 76, 0.1);
+      width: fit-content;
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .typing-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: typing 1.2s ease-in-out infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+
+      0%,
+      100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(201, 168, 76, 0.1);
+      padding: 4rem 3rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer-brand .logo {
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+      max-width: 280px;
+    }
+
+    .footer-col h5 {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 0.8rem;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .footer-col li:hover {
+      color: var(--text);
+    }
+
+    .footer-bottom {
+      grid-column: 1 / -1;
+      border-top: 1px solid rgba(201, 168, 76, 0.1);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── REVEAL ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 {
+      transition-delay: 0.1s;
+    }
+
+    .reveal-delay-2 {
+      transition-delay: 0.2s;
+    }
+
+    .reveal-delay-3 {
+      transition-delay: 0.3s;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 8rem 3rem;
+    }
+
+    /* ── DIVIDER ── */
+    .gold-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 2rem 0;
+    }
+
+    .gold-divider.center {
+      margin: 2rem auto;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      nav {
+        padding: 1.25rem 1.5rem;
+      }
+
+      nav ul {
+        display: none;
+      }
+
+      #about {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding: 4rem 1.5rem;
+      }
+
+      .about-visual {
+        height: 250px;
+      }
+
+      .destinations-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dest-card {
+        height: 400px;
+      }
+
+      footer {
+        grid-template-columns: 1fr 1fr;
+        padding: 3rem 1.5rem;
+      }
+
+      .chatbot-window {
+        width: calc(100vw - 2rem);
+        right: 1rem;
+      }
+
+      section {
+        padding: 5rem 1.5rem;
+      }
+
+      .section-wrapper {
+        padding: 5rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#hero" class="logo">Time<span>Travel</span></a>
+    <ul>
+      <li><a href="#about">L'Agence</a></li>
+      <li><a href="#destinations">Destinations</a></li>
+      <li><a href="#quiz">Mon Voyage</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="stars" id="starsContainer"></div>
+    <div class="clock-deco"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">✦ Agence de Voyage Temporel de Luxe ✦</p>
+      <h1 class="hero-title">Traversez<br>les <em>époques</em></h1>
+      <p class="hero-sub">Découvrez Paris en 1889, marchez aux côtés des dinosaures du Crétacé, ou respirez l'air de la
+        Renaissance à Florence. Le temps n'est plus une limite.</p>
+      <div class="hero-ctas">
+        <a href="#destinations" class="btn-primary">Explorer les Destinations</a>
+        <a href="#quiz" class="btn-secondary">Trouver Mon Époque</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Défiler</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <div class="section-wrapper" id="about">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6rem; align-items:center;">
+      <div class="reveal">
+        <p class="section-label">Notre Histoire</p>
+        <h2 class="section-title">Pionniers du voyage dans le temps depuis 2089</h2>
+        <div class="gold-divider"></div>
+        <p style="color:var(--text-dim); font-size:0.85rem; line-height:2; margin-bottom:1rem;">TimeTravel Agency est
+          née d'une conviction : chaque être humain mérite de vivre l'Histoire, non pas de la lire. Fondée par les
+          professeurs Elara Chen et Marcus Voss, notre agence offre des expériences temporelles d'une précision et d'un
+          luxe inégalés.</p>
+        <p style="color:var(--text-dim); font-size:0.85rem; line-height:2;">Grâce à notre technologie propriétaire de
+          chronodéplacement quantique, nous vous transportons dans les moments les plus extraordinaires de l'histoire
+          humaine — et préhumaine — avec toutes les garanties de sécurité et de confort.</p>
+        <div class="stats-grid" style="margin-top:3rem;">
+          <div class="stat">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Destinations</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Taux de retour</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">12,400+</div>
+            <div class="stat-label">Voyageurs satisfaits</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">Depuis 2089</div>
+            <div class="stat-label">En activité</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual reveal reveal-delay-2">
+        <div class="about-visual-inner">
+          <div
+            style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem;">
+            <div style="font-size:5rem; animation: rotateSlow 20s linear infinite; display:block;">⟳</div>
+            <p
+              style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--gold); letter-spacing:0.2em; text-transform:uppercase;">
+              Chronos</p>
+            <p style="font-size:0.6rem; letter-spacing:0.3em; color:var(--text-dim); text-transform:uppercase;">Moteur
+              de Déplacement Quantique</p>
+          </div>
+          <div style="position:absolute; top:1.5rem; right:1.5rem; text-align:right;">
+            <div style="font-size:0.55rem; letter-spacing:0.2em; color:var(--gold); text-transform:uppercase;">Statut
+            </div>
+            <div style="font-size:0.65rem; color:#4ade80; margin-top:2px;">● Opérationnel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESTINATIONS -->
+  <div class="section-wrapper" id="destinations">
+    <div style="text-align:center; margin-bottom:4rem;" class="reveal">
+      <p class="section-label">Nos Destinations</p>
+      <h2 class="section-title">Trois époques,<br>trois univers</h2>
+      <div class="gold-divider center"></div>
+      <p style="color:var(--text-dim); font-size:0.8rem; max-width:500px; margin:0 auto;">Chaque destination est
+        soigneusement sélectionnée pour son potentiel d'émerveillement et sa valeur historique ou naturelle unique.</p>
+    </div>
+    <div class="destinations-grid">
+
+      <!-- Paris 1889 -->
+      <div class="dest-card reveal">
+        <div class="dest-img-bg" style="background:linear-gradient(135deg,#1a1205,#2e1f0a,#150d02);">
+          <div
+            style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3.5rem;">🗼</div>
+            <div style="font-size:1.5rem; opacity:0.3;">✨</div>
+          </div>
+          <div
+            style="position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(201,168,76,0.1), transparent 70%);">
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-badge">Belle Époque</div>
+        <div class="dest-static-info">
+          <div class="dest-era">Paris · Été 1889</div>
+          <div class="dest-name">L'Exposition<br>Universelle</div>
+        </div>
+        <div class="dest-content">
+          <p class="dest-desc">Assistez à l'inauguration de la Tour Eiffel, déambulez parmi les merveilles techniques du
+            monde entier. Rencontrez Gustave Eiffel et découvrez le Paris de la Belle Époque dans tout sa splendeur
+            gastronomique et culturelle.</p>
+          <div class="dest-price">€ 28,500</div>
+          <div class="dest-price-label">par personne · 7 jours</div>
+          <a href="#" class="btn-primary" style="font-size:0.6rem;">Réserver</a>
+        </div>
+      </div>
+
+      <!-- Crétacé -->
+      <div class="dest-card reveal reveal-delay-1">
+        <div class="dest-img-bg" style="background:linear-gradient(135deg,#050e0a,#062010,#020a05);">
+          <div
+            style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3.5rem;">🦕</div>
+            <div style="font-size:1.5rem; opacity:0.3;">🌿</div>
+          </div>
+          <div
+            style="position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(50,180,80,0.08), transparent 70%);">
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-badge">Exclusif</div>
+        <div class="dest-static-info">
+          <div class="dest-era">Amérique du Nord · −65 Ma</div>
+          <div class="dest-name">Le Crétacé<br>Supérieur</div>
+        </div>
+        <div class="dest-content">
+          <p class="dest-desc">Observez les derniers dinosaures dans leur environnement naturel d'une sécurité absolue.
+            Forêts géantes, mers intérieures, créatures extraordinaires — une nature préhistorique vierge que nul autre
+            humain n'a contemplée.</p>
+          <div class="dest-price">€ 45,000</div>
+          <div class="dest-price-label">par personne · 5 jours</div>
+          <a href="#" class="btn-primary" style="font-size:0.6rem;">Réserver</a>
+        </div>
+      </div>
+
+      <!-- Florence 1504 -->
+      <div class="dest-card reveal reveal-delay-2">
+        <div class="dest-img-bg" style="background:linear-gradient(135deg,#140805,#200e06,#100603);">
+          <div
+            style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3.5rem;">🎨</div>
+            <div style="font-size:1.5rem; opacity:0.3;">🌺</div>
+          </div>
+          <div
+            style="position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(180,80,50,0.08), transparent 70%);">
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-badge">Culturel</div>
+        <div class="dest-static-info">
+          <div class="dest-era">Florence · Printemps 1504</div>
+          <div class="dest-name">La Renaissance<br>Florentine</div>
+        </div>
+        <div class="dest-content">
+          <p class="dest-desc">Assistez à l'achèvement du David de Michel-Ange. Côtoyez Léonard de Vinci dans son
+            atelier, découvrez les Médicis dans leur splendeur et vivez l'explosion créatrice qui changea le monde à
+            jamais.</p>
+          <div class="dest-price">€ 32,000</div>
+          <div class="dest-price-label">par personne · 10 jours</div>
+          <a href="#" class="btn-primary" style="font-size:0.6rem;">Réserver</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div style="background:var(--dark-2); padding:8rem 3rem;" id="quiz">
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+      <div class="reveal">
+        <p class="section-label">Personnalisation</p>
+        <h2 class="section-title">Quelle époque<br>est faite pour vous ?</h2>
+        <div class="gold-divider center"></div>
+        <p class="quiz-sub">Répondez à 4 questions pour découvrir votre destination temporelle idéale.</p>
+      </div>
+
+      <div class="quiz-container reveal">
+        <div class="quiz-progress">
+          <div class="progress-dot active" id="dot0"></div>
+          <div class="progress-dot" id="dot1"></div>
+          <div class="progress-dot" id="dot2"></div>
+          <div class="progress-dot" id="dot3"></div>
+        </div>
+
+        <div id="quizStep">
+          <p class="quiz-question" id="quizQuestion"></p>
+          <div class="quiz-options" id="quizOptions"></div>
+          <div style="margin-top:2rem;">
+            <button class="btn-secondary" id="quizNext" onclick="nextQuestion()" style="display:none;">Suivant
+              →</button>
+          </div>
+        </div>
+
+        <div class="quiz-result" id="quizResult">
+          <div class="result-icon" id="resultIcon"></div>
+          <div class="result-title" id="resultTitle"></div>
+          <div class="result-era" id="resultEra"></div>
+          <div class="gold-divider center"></div>
+          <p class="result-desc" id="resultDesc"></p>
+          <a href="#destinations" class="btn-primary">Voir cette destination</a>
+          <button onclick="resetQuiz()" class="btn-secondary"
+            style="margin-left:1rem; margin-top:0.5rem;">Recommencer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-brand">
+      <a href="#" class="logo">Time<span>Travel</span></a>
+      <p>L'agence de voyage temporel de référence depuis 2089. Nous vous offrons des expériences uniques à travers les
+        âges avec élégance et sécurité absolue.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Destinations</h5>
+      <ul>
+        <li>Paris 1889</li>
+        <li>Crétacé −65 Ma</li>
+        <li>Florence 1504</li>
+        <li>Nouvelles destinations</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Services</h5>
+      <ul>
+        <li>Voyages privés</li>
+        <li>Groupes & entreprises</li>
+        <li>Formations historiques</li>
+        <li>Assurance temporelle</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li>contact@timetravel.agency</li>
+        <li>+33 7 00 20 89 XX</li>
+        <li>Chrono Tower, Paris 2089</li>
+        <li>Ouverts 24h/24, 7j/7</li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2089–2094 TimeTravel Agency. Tous droits réservés.</span>
+      <span>Licence de chronodéplacement n° TTA-FR-2089-001 ✦ Projet pédagogique M1/M2</span>
+    </div>
+  </footer>
+
+  <!-- CHATBOT FAB -->
+  <button class="chatbot-fab" onclick="toggleChat()" id="chatFab" title="Parlez à notre assistant">💬</button>
+
+  <!-- CHATBOT WINDOW -->
+  <div class="chatbot-window" id="chatWindow">
+    <div class="chat-header">
+      <div class="chat-avatar">⏱</div>
+      <div class="chat-header-info">
+        <h4>Chronos</h4>
+        <p>Assistant TimeTravel Agency</p>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot">
+        <div class="message-bubble">Bonjour et bienvenue chez <strong>TimeTravel Agency</strong> ! ✨<br><br>Je suis
+          Chronos, votre guide pour les voyages temporels. Comment puis-je vous aider à choisir votre destination à
+          travers les âges ?</div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input class="chat-input" id="chatInput" type="text"
+        placeholder="Posez-moi vos questions sur les voyages temporels..."
+        onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="chat-send" id="chatSend" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script>
+    // ── STARS ──
+    (function () {
+      const container = document.getElementById('starsContainer');
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.cssText = `left:${Math.random() * 100}%;top:${Math.random() * 100}%;--dur:${2 + Math.random() * 4}s;--delay:${Math.random() * 4}s;width:${Math.random() < 0.8 ? 1 : 2}px;height:${Math.random() < 0.8 ? 1 : 2}px;`;
+        container.appendChild(star);
+      }
+    })();
+
+    // ── NAV SCROLL ──
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── REVEAL ON SCROLL ──
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── QUIZ ──
+    const questions = [
+      {
+        text: "Quel type d'expérience recherchez-vous ?",
+        options: [
+          { text: "Culturelle et artistique", scores: [2, 0, 3] },
+          { text: "Aventure et nature sauvage", scores: [0, 3, 0] },
+          { text: "Élégance et raffinement", scores: [3, 0, 2] }
+        ]
+      },
+      {
+        text: "Votre période préférée de l'histoire ?",
+        options: [
+          { text: "Histoire moderne (XIXe–XXe siècle)", scores: [3, 0, 0] },
+          { text: "Temps anciens et origines du monde", scores: [0, 3, 0] },
+          { text: "Renaissance et classicisme", scores: [0, 0, 3] }
+        ]
+      },
+      {
+        text: "Vous préférez...",
+        options: [
+          { text: "L'effervescence d'une grande ville", scores: [3, 0, 1] },
+          { text: "La nature vierge et préhistorique", scores: [0, 3, 0] },
+          { text: "L'art et l'architecture sublime", scores: [1, 0, 3] }
+        ]
+      },
+      {
+        text: "Votre activité idéale lors d'un voyage ?",
+        options: [
+          { text: "Visiter des monuments historiques", scores: [2, 0, 3] },
+          { text: "Observer des animaux extraordinaires", scores: [0, 3, 0] },
+          { text: "Rencontrer des artistes et créateurs", scores: [1, 0, 3] }
+        ]
+      }
+    ];
+
+    const destinations = [
+      {
+        name: "Paris 1889",
+        era: "Belle Époque · Exposition Universelle",
+        icon: "🗼",
+        desc: "Vous êtes fait(e) pour les lumières de Paris ! La Belle Époque est votre époque : sophistiquée, culturelle, bouillonnante. Vous verrez naître la Tour Eiffel, dégusterez les meilleures tables parisiennes et vivrez dans l'atmosphère euphorique d'une ville au summum de son rayonnement mondial."
+      },
+      {
+        name: "Crétacé − 65 Ma",
+        era: "Amérique du Nord Préhistorique",
+        icon: "🦕",
+        desc: "L'aventure ultime vous attend ! Vous avez l'âme d'un explorateur et le courage d'un pionnier. Le Crétacé supérieur vous offrira des paysages que nul humain n'a jamais contemplés, une faune extraordinaire et une immersion totale dans la nature à l'état pur et originel."
+      },
+      {
+        name: "Florence 1504",
+        era: "Renaissance Italienne · Quattrocento",
+        icon: "🎨",
+        desc: "Votre sensibilité artistique mérite la Renaissance florentine ! Vous côtoierez Michel-Ange, Léonard de Vinci et les Médicis au cœur de l'explosion créatrice qui réinventa le monde. Chaque rue, chaque palais, chaque atelier est une œuvre d'art vivante."
+      }
+    ];
+
+    let currentQ = 0;
+    let scores = [0, 0, 0];
+    let selectedOption = null;
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      document.getElementById('quizQuestion').textContent = q.text;
+      document.getElementById('quizNext').style.display = 'none';
+      selectedOption = null;
+
+      const letters = ['A', 'B', 'C'];
+      document.getElementById('quizOptions').innerHTML = q.options.map((opt, i) =>
+        `<button class="quiz-option" onclick="selectOption(${i})" id="opt${i}">
+      <span class="option-letter">${letters[i]}</span>
+      ${opt.text}
+    </button>`
+      ).join('');
+
+      // Update dots
+      document.querySelectorAll('.progress-dot').forEach((d, i) => {
+        d.classList.toggle('active', i <= currentQ);
+      });
+    }
+
+    function selectOption(i) {
+      document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+      document.getElementById('opt' + i).classList.add('selected');
+      selectedOption = i;
+      document.getElementById('quizNext').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      if (selectedOption === null) return;
+      questions[currentQ].options[selectedOption].scores.forEach((s, i) => scores[i] += s);
+      currentQ++;
+      if (currentQ < questions.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      const best = scores.indexOf(Math.max(...scores));
+      const dest = destinations[best];
+      document.getElementById('quizStep').style.display = 'none';
+      const result = document.getElementById('quizResult');
+      result.classList.add('show');
+      document.getElementById('resultIcon').textContent = dest.icon;
+      document.getElementById('resultTitle').textContent = dest.name;
+      document.getElementById('resultEra').textContent = dest.era;
+      document.getElementById('resultDesc').textContent = dest.desc;
+    }
+
+    function resetQuiz() {
+      currentQ = 0;
+      scores = [0, 0, 0];
+      selectedOption = null;
+      document.getElementById('quizStep').style.display = 'block';
+      document.getElementById('quizResult').classList.remove('show');
+      renderQuestion();
+    }
+
+    renderQuestion();
+
+    // ── CHATBOT ──
+    let chatOpen = false;
+
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      document.getElementById('chatWindow').classList.toggle('open', chatOpen);
+      document.getElementById('chatFab').textContent = chatOpen ? '✕' : '💬';
+      if (chatOpen) document.getElementById('chatInput').focus();
+    }
+
+    function addMessage(text, role) {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `message ${role}`;
+      div.innerHTML = `<div class="message-bubble">${text}</div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function showTyping() {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'message bot';
+      div.id = 'typingIndicator';
+      div.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    const systemPrompt = `Tu es Chronos, l'assistant virtuel de TimeTravel Agency, une agence de voyage temporel de luxe fondée en 2089.
+Ton rôle : conseiller les clients sur nos 3 destinations temporelles avec expertise et enthousiasme.
+
+Ton ton :
+- Professionnel mais chaleureux et passionné d'histoire
+- Toujours enthousiaste sans être trop familier
+- Expertise en voyage temporel (fictif mais crédible)
+- Utilise occasionnellement des emojis subtils (⏱ 🗼 🦕 🎨)
+
+Nos 3 destinations :
+1. PARIS 1889 (Belle Époque, Exposition Universelle, inauguration de la Tour Eiffel) — 28 500 €/personne, 7 jours
+2. CRÉTACÉ −65 millions d'années (dinosaures, nature préhistorique vierge, Amérique du Nord) — 45 000 €/personne, 5 jours  
+3. FLORENCE 1504 (Renaissance italienne, Michel-Ange et le David, Léonard de Vinci, les Médicis) — 32 000 €/personne, 10 jours
+
+Pour les réservations, diriger vers notre formulaire ou proposer de les mettre en contact avec un conseiller.
+Réponds toujours en français. Sois concis (2-4 phrases max par réponse).`;
+
+    let chatHistory = [];
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      addMessage(text, 'user');
+      chatHistory.push({ role: 'user', content: text });
+
+      document.getElementById('chatSend').disabled = true;
+      showTyping();
+
+      try {
+        const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer U13Lbjow9SgKy0uekt36ypv5BALAONvx'
+          },
+          body: JSON.stringify({
+            model: 'mistral-large-latest',
+            max_tokens: 400,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...chatHistory
+            ]
+          })
+        });
+
+        const data = await response.json();
+        removeTyping();
+
+        const reply = data.choices?.[0]?.message?.content || "Je suis désolé, je n'ai pas pu traiter votre message. Réessayez dans un instant.";
+        chatHistory.push({ role: 'assistant', content: reply });
+        addMessage(reply, 'bot');
+      } catch (err) {
+        removeTyping();
+        addMessage("Je suis momentanément indisponible. Contactez-nous directement à contact@timetravel.agency", 'bot');
+      }
+
+      document.getElementById('chatSend').disabled = false;
+      input.focus();
+    }
+  </script>
+</body>
+
+</html>
