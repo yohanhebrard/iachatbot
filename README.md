@@ -6,10 +6,10 @@ Webapp pour une agence de voyage temporel fictive, développée dans le cadre du
 
 ## 👥 Membres du groupe
 
-- Prénom NOM
-- Prénom NOM
-- Prénom NOM
-- Prénom NOM
+- Yohan Hebrard
+- Tom Candela
+- Nils Jaudon
+- Mathéo Laurens
 
 ---
 
